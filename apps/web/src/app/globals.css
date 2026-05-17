@@ -239,3 +239,134 @@ h1, h2, h3, h4, h5, h6 {
   0%, 100% { opacity: 0.3; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1); }
 }
+/* ================================================================
+   TIPTAP EDITOR STYLES
+   ================================================================
+   Styles the contenteditable area that TipTap renders.
+   The .mf-editor-content class is set in editorProps above.
+   ================================================================ */
+
+.mf-editor-content {
+  outline: none;
+  font-family: var(--font-cormorant);
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--theme-text);
+  min-height: 400px;
+}
+
+.mf-editor-content h1 {
+  font-family: var(--font-cinzel);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--theme-text);
+  margin: 24px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--theme-border);
+}
+
+.mf-editor-content h2 {
+  font-family: var(--font-cormorant);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--theme-text);
+  margin: 20px 0 8px;
+}
+
+.mf-editor-content h3 {
+  font-family: var(--font-cormorant);
+  font-size: 17px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--color-sacred-gold);
+  margin: 16px 0 6px;
+}
+
+.mf-editor-content p {
+  margin: 0 0 12px;
+}
+
+.mf-editor-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--theme-text-3);
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+.mf-editor-content strong {
+  font-weight: 700;
+  color: var(--theme-text);
+}
+
+.mf-editor-content em {
+  font-style: italic;
+  color: var(--theme-text-2);
+}
+
+.mf-editor-content u {
+  text-decoration: underline;
+  text-decoration-color: var(--color-sacred-gold);
+  text-underline-offset: 3px;
+}
+
+.mf-editor-content s {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Bullet and ordered lists */
+.mf-editor-content ul {
+  padding-left: 24px;
+  margin: 8px 0 12px;
+}
+
+.mf-editor-content ol {
+  padding-left: 24px;
+  margin: 8px 0 12px;
+}
+
+.mf-editor-content li {
+  margin-bottom: 4px;
+  line-height: 1.7;
+}
+
+.mf-editor-content li p {
+  margin: 0;
+}
+
+/* Scripture callout — blockquote */
+.mf-editor-content blockquote {
+  border-left: 3px solid var(--color-sacred-gold);
+  background-color: rgba(184, 135, 42, 0.05);
+  padding: 10px 16px;
+  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--theme-text-2);
+}
+
+.mf-editor-content blockquote p {
+  margin: 0;
+}
+
+/* Highlight */
+.mf-editor-content mark {
+  background-color: rgba(255, 224, 102, 0.5);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* Horizontal rule */
+.mf-editor-content hr {
+  border: none;
+  border-top: 0.5px solid var(--theme-border);
+  margin: 20px 0;
+}
+
+/* Selection colour */
+.mf-editor-content ::selection {
+  background-color: rgba(184, 135, 42, 0.2);
+}

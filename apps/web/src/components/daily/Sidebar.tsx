@@ -9,6 +9,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 const DISCIPLINES = [
   { id: 'philosophy',   label: 'Philosophy',   colour: '#7A4A10' },
@@ -186,6 +187,30 @@ export function Sidebar() {
             </span>
           </button>
         ))}
+      </div>
+
+      {/* New note button */}
+      <div className="px-3 pb-2">
+        <Link
+          href="/notes/new"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            width: '100%',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(184,135,42,0.08)',
+            border: '0.5px solid rgba(184,135,42,0.25)',
+            color: 'var(--color-sacred-gold)',
+            fontSize: '12px',
+            fontWeight: 500,
+            textDecoration: 'none',
+            fontFamily: 'var(--font-sans)',
+          }}
+        >
+          ✏ New note
+        </Link>
       </div>
 
       {/* Daily review button — pinned to bottom */}
