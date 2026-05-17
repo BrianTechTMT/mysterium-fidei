@@ -56,15 +56,15 @@
 
 [data-theme="parchment"] {
   --theme-bg:            #E8D5A3;
-  --theme-bg-secondary:  #FFFFFF;
-  --theme-bg-tertiary:   #EDE8DF;
+  --theme-bg-secondary:  #DFD09A;
+  --theme-bg-tertiary:   #D4C48A;
   --theme-text:          #1C1610;
   --theme-text-2:        #3D3425;
   --theme-text-3:        rgba(61, 52, 37, 0.5);
-  --theme-border:        rgba(184, 135, 42, 0.2);
-  --theme-border-strong: rgba(184, 135, 42, 0.4);
-  --theme-card:          #FFFFFF;
-  --theme-sidebar:       #F0EBE0;
+  --theme-border:        rgba(184, 135, 42, 0.3);
+  --theme-border-strong: rgba(184, 135, 42, 0.5);
+  --theme-card:          #EDE4C0;
+  --theme-sidebar:       #D9C99A;
   --theme-topbar:        #0E0A05;
 }
 
