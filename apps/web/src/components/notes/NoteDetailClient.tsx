@@ -1,21 +1,14 @@
 // ================================================================
-// MYSTERIUM FIDEI — Note Editor
+// MYSTERIUM FIDEI — Note Detail Client
 // ================================================================
-// The core rich text editor for theology study notes.
-// Built on TipTap (ProseMirror) — the same engine that powers
-// Notion, Linear, and GitLab's editor.
-//
-// Features:
-// - Full rich text: headings, bold, italic, lists, blockquote
-// - Discipline selection drives colour theming
-// - Scripture callout block (blockquote styled)
-// - Auto-save to localStorage (persists between sessions)
-// - Word count
-// - Keyboard shortcuts (Cmd+B, Cmd+I, etc.)
+// Loads a saved note by ID and opens it in the full editor.
+// 'use client' — reads localStorage, uses useState/useEffect.
 // ================================================================
 
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
@@ -23,13 +16,10 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Placeholder from '@tiptap/extension-placeholder'
-import { useState, useEffect, useCallback } from 'react'
+import { getNoteById, saveNote, type SavedNote } from '@/lib/notesStorage'
 import { DisciplineSelector } from './DisciplineSelector'
 import { EditorToolbar } from './EditorToolbar'
-import { saveNote } from '@/lib/notesStorage'
-import { useRouter } from 'next/navigation'
 
-// ---- Discipline colour map -----------------------------------
 const DISC_COLOURS: Record<string, string> = {
   Philosophy:   '#7A4A10',
   Apologetics:  '#7A1F2E',
@@ -46,102 +36,100 @@ const DISC_BG: Record<string, string> = {
   Spirituality: '#E8F2E7',
 }
 
-// ---- Local storage key --------------------------------------
-const DRAFT_KEY = 'mf-note-draft'
-
-// ---- Component ----------------------------------------------
-
-export function NoteEditor() {
-  const [discipline, setDiscipline] = useState('Theology')
+export function NoteDetailClient({ id }: { id: string }) {
+  const router = useRouter()
+  const [note, setNote] = useState<SavedNote | null>(null)
   const [title, setTitle] = useState('')
-  const [saved, setSaved] = useState(false)
+  const [discipline, setDiscipline] = useState('Theology')
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [notFound, setNotFound] = useState(false)
 
   const colour = DISC_COLOURS[discipline] ?? '#2B3B6B'
   const discBg = DISC_BG[discipline] ?? '#E8EBF6'
-  const router = useRouter()
 
-  // ---- TipTap editor instance ----------------------------
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        // StarterKit includes: Bold, Italic, Strike, Code,
-        // Paragraph, Heading, BulletList, OrderedList,
-        // Blockquote, HardBreak, HorizontalRule, History
-        heading: { levels: [1, 2, 3] },
-      }),
-      Typography,     // Smart quotes, em-dashes, etc.
+      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
+      Typography,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Underline,
       Highlight.configure({ multicolor: false }),
       Placeholder.configure({
-        placeholder:
-          'Begin your theological reflection here…\n\n' +
-          'Use the toolbar above for headings, lists, and scripture callouts.\n' +
-          'Press Cmd+B for bold, Cmd+I for italic.',
+        placeholder: 'Continue your reflection…',
       }),
     ],
-    // Load draft from localStorage on mount
     content: '',
     editorProps: {
-      attributes: {
-        class: 'mf-editor-content',
-        spellcheck: 'true',
-      },
-    },
-    onUpdate: ({ editor }) => {
-      // Auto-save draft to localStorage on every change
-      const draft = {
-        title,
-        discipline,
-        content: editor.getJSON(),
-        savedAt: new Date().toISOString(),
-      }
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
-      setLastSaved(new Date())
-      setSaved(true)
+      attributes: { class: 'mf-editor-content', spellcheck: 'true' },
     },
   })
 
-  // ---- Load draft on mount --------------------------------
+  // Load note on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(DRAFT_KEY)
-      if (saved) {
-        const draft = JSON.parse(saved)
-        if (draft.title) setTitle(draft.title)
-        if (draft.discipline) setDiscipline(draft.discipline)
-        if (draft.content && editor) {
-          editor.commands.setContent(draft.content)
-        }
-      }
-    } catch {
-      // No draft or parse error — start fresh
+    const found = getNoteById(id)
+    if (!found) {
+      setNotFound(true)
+      return
     }
-  }, [editor])
+    setNote(found)
+    setTitle(found.title)
+    setDiscipline(found.discipline)
+    if (editor && found.content) {
+      editor.commands.setContent(found.content)
+    }
+  }, [id, editor])
 
-  // ---- Save title to draft --------------------------------
-  useEffect(() => {
-    if (!title) return
-    const content = editor?.getJSON() ?? {}
-    const draft = {
-      title,
+  const handleSave = () => {
+    if (!editor || !note) return
+    saveNote({
+      id: note.id,
+      title: title || 'Untitled note',
       discipline,
-      content,
-      savedAt: new Date().toISOString(),
-    }
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
-  }, [title, discipline, editor])
+      content: editor.getJSON(),
+    })
+    setLastSaved(new Date())
+  }
 
-  // ---- Clear draft ----------------------------------------
-  const clearDraft = useCallback(() => {
-    localStorage.removeItem(DRAFT_KEY)
-    setTitle('')
-    setDiscipline('Theology')
-    editor?.commands.clearContent()
-    setSaved(false)
-    setLastSaved(null)
-  }, [editor])
+  if (notFound) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          gap: '12px',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-cormorant)',
+            fontSize: '20px',
+            color: 'var(--theme-text-2)',
+            fontStyle: 'italic',
+          }}
+        >
+          Note not found
+        </p>
+        <button
+          onClick={() => router.push('/notes')}
+          style={{
+            padding: '8px 20px',
+            borderRadius: '8px',
+            backgroundColor: 'var(--color-sacred-gold)',
+            color: '#fff',
+            fontSize: '12px',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-sans)',
+          }}
+        >
+          Back to notes
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -152,8 +140,7 @@ export function NoteEditor() {
         overflow: 'hidden',
       }}
     >
-
-      {/* ---- Note header / meta bar ----------------------- */}
+      {/* Header */}
       <div
         style={{
           flexShrink: 0,
@@ -165,7 +152,25 @@ export function NoteEditor() {
           gap: '12px',
         }}
       >
-        {/* Discipline colour indicator */}
+        {/* Back button */}
+        <button
+          onClick={() => router.push('/notes')}
+          style={{
+            background: 'none',
+            border: '0.5px solid var(--theme-border)',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '12px',
+            color: 'var(--theme-text-2)',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-sans)',
+            flexShrink: 0,
+          }}
+        >
+          ← Notes
+        </button>
+
+        {/* Discipline colour bar */}
         <div
           style={{
             width: '4px',
@@ -176,12 +181,11 @@ export function NoteEditor() {
           }}
         />
 
-        {/* Title input */}
+        {/* Title */}
         <input
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          placeholder="Note title…"
           style={{
             flex: 1,
             border: 'none',
@@ -199,34 +203,17 @@ export function NoteEditor() {
         <span
           style={{
             fontSize: '10px',
-            color: saved ? colour : 'var(--theme-text-3)',
+            color: lastSaved ? colour : 'var(--theme-text-3)',
             fontFamily: 'var(--font-sans)',
           }}
         >
-          {saved && lastSaved
+          {lastSaved
             ? `Saved ${lastSaved.toLocaleTimeString()}`
-            : 'Unsaved draft'}
+            : 'Unsaved changes'}
         </span>
-
-        {/* Clear button */}
-        <button
-          onClick={clearDraft}
-          style={{
-            fontSize: '10px',
-            color: 'var(--theme-text-3)',
-            background: 'none',
-            border: '0.5px solid var(--theme-border)',
-            borderRadius: '6px',
-            padding: '4px 10px',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-sans)',
-          }}
-        >
-          New note
-        </button>
       </div>
 
-      {/* ---- Discipline selector -------------------------- */}
+      {/* Discipline selector */}
       <div
         style={{
           flexShrink: 0,
@@ -241,12 +228,10 @@ export function NoteEditor() {
         />
       </div>
 
-      {/* ---- Toolbar -------------------------------------- */}
+      {/* Toolbar */}
       <EditorToolbar editor={editor} disciplineColour={colour} />
 
-      {/* ---- Editor content ------------------------------- */}
-      {/* The EditorContent component renders TipTap's         */}
-      {/* contenteditable div. All styling is in globals.css   */}
+      {/* Editor content */}
       <div
         style={{
           flex: 1,
@@ -255,7 +240,6 @@ export function NoteEditor() {
           padding: '24px 32px',
         }}
       >
-        {/* Discipline badge above content */}
         <div
           style={{
             display: 'inline-flex',
@@ -291,7 +275,7 @@ export function NoteEditor() {
         <EditorContent editor={editor} />
       </div>
 
-      {/* ---- Bottom action bar ---------------------------- */}
+      {/* Bottom action bar */}
       <div
         style={{
           flexShrink: 0,
@@ -304,16 +288,7 @@ export function NoteEditor() {
         }}
       >
         <button
-          onClick={() => {
-            if (!editor) return
-            const saved = saveNote({
-              title: title || 'Untitled note',
-              discipline,
-              content: editor.getJSON(),
-            })
-            // Navigate to the notes list after saving
-            router.push('/notes')
-          }}
+          onClick={handleSave}
           style={{
             padding: '7px 16px',
             borderRadius: '8px',
@@ -326,7 +301,7 @@ export function NoteEditor() {
             fontFamily: 'var(--font-sans)',
           }}
         >
-          Save note
+          Save changes
         </button>
         <button
           style={{
@@ -351,10 +326,15 @@ export function NoteEditor() {
             fontFamily: 'var(--font-sans)',
           }}
         >
-          Auto-saved as draft · Cmd+B bold · Cmd+I italic
+          {note?.wordCount ?? 0} words · created {note
+            ? new Date(note.createdAt).toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })
+            : ''}
         </span>
       </div>
-
     </div>
   )
 }

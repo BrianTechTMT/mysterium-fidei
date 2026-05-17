@@ -77,6 +77,43 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Navigation */}
+      <div className="px-3 pt-3 pb-1">
+        <p className="section-label">Navigate</p>
+      </div>
+      <nav className="flex flex-col gap-0.5 px-2 pb-2">
+        {[
+          { href: '/daily',     icon: '📅', label: 'Daily Sacred' },
+          { href: '/notes',     icon: '📖', label: 'My Notes'     },
+          { href: '/notes/new', icon: '✏',  label: 'New Note'     },
+        ].map(item => (
+          <Link
+            key={item.href}
+            href={item.href}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '7px 10px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              color: 'var(--theme-text-2)',
+              fontSize: '12px',
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            <span>{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      {/* Divider */}
+      <div
+        className="mx-3"
+        style={{ height: '0.5px', backgroundColor: 'var(--theme-border)' }}
+      />
+
       {/* Disciplines */}
       <div className="px-3 pt-3 pb-1">
         <p className="section-label">Disciplines</p>
