@@ -1,0 +1,145 @@
+/* ================================================================
+   MYSTERIUM FIDEI — Global Styles (Tailwind v4)
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+@import "tailwindcss";
+
+/* ---- Brand design tokens ------------------------------------ */
+@theme {
+  --font-cinzel: 'Cinzel', serif;
+  --font-cormorant: 'Cormorant Garamond', serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  --color-sanctum-black:    #0E0A05;
+  --color-sacred-gold:      #B8872A;
+  --color-sacred-gold-lt:   #E8D49A;
+  --color-sacred-gold-pale: #FAF4E2;
+  --color-parchment:        #F5F0E8;
+  --color-ink:              #1C1610;
+  --color-ink-2:            #3D3425;
+
+  --color-ef-indigo:        #3C3489;
+  --color-ef-indigo-lt:     #EEEDFE;
+  --color-of-teal:          #0F6E56;
+  --color-of-teal-lt:       #E1F5EE;
+
+  --color-philosophy:       #7A4A10;
+  --color-philosophy-lt:    #FDF0DC;
+  --color-apologetics:      #7A1F2E;
+  --color-apologetics-lt:   #F5E8EA;
+  --color-bible:            #0F6E56;
+  --color-bible-lt:         #E1F5EE;
+  --color-theology:         #2B3B6B;
+  --color-theology-lt:      #E8EBF6;
+  --color-spirituality:     #3D5C3A;
+  --color-spirituality-lt:  #E8F2E7;
+
+  --color-vestment-green:   #2E6B2E;
+  --color-vestment-purple:  #4B2E6B;
+  --color-vestment-red:     #8B1A1A;
+  --color-vestment-rose:    #C47C8A;
+  --color-vestment-gold:    #B8872A;
+
+  --shadow-parchment:    0 2px 8px rgba(28, 22, 16, 0.08);
+  --shadow-parchment-lg: 0 4px 16px rgba(28, 22, 16, 0.12);
+  --shadow-gold:         0 0 0 1.5px rgba(184, 135, 42, 0.4);
+}
+
+/* ---- Base styles -------------------------------------------- */
+body {
+  background-color: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-cormorant);
+}
+
+/* ---- Utility classes ---------------------------------------- */
+.scripture {
+  font-family: var(--font-cormorant);
+  font-style: italic;
+  color: var(--color-ink-2);
+}
+
+.latin {
+  font-family: var(--font-cormorant);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  color: var(--color-sacred-gold);
+}
+
+/* Discipline chips */
+.chip-philosophy {
+  background-color: var(--color-philosophy-lt);
+  color: var(--color-philosophy);
+}
+.chip-apologetics {
+  background-color: var(--color-apologetics-lt);
+  color: var(--color-apologetics);
+}
+.chip-bible {
+  background-color: var(--color-bible-lt);
+  color: var(--color-bible);
+}
+.chip-theology {
+  background-color: var(--color-theology-lt);
+  color: var(--color-theology);
+}
+.chip-spirituality {
+  background-color: var(--color-spirituality-lt);
+  color: var(--color-spirituality);
+}
+
+/* Liturgical form chips */
+.chip-ef {
+  background-color: var(--color-ef-indigo-lt);
+  color: var(--color-ef-indigo);
+}
+.chip-of {
+  background-color: var(--color-of-teal-lt);
+  color: var(--color-of-teal);
+}
+
+/* Scripture callout block */
+.scripture-callout {
+  border-left: 2px solid var(--color-sacred-gold);
+  background-color: var(--color-sacred-gold-pale);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-cormorant);
+  font-style: italic;
+  color: var(--color-ink-2);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* Servus message bubble */
+.servus-bubble {
+  background-color: white;
+  border: 0.5px solid rgba(184, 135, 42, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-parchment);
+}
+
+/* Standard card */
+.mf-card {
+  background-color: white;
+  border: 0.5px solid rgba(184, 135, 42, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-parchment);
+}
+
+/* Section label */
+.section-label {
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(61, 52, 37, 0.5);
+}
