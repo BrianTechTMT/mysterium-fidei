@@ -19,6 +19,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { getNoteById, saveNote, type SavedNote } from '@/lib/notesStorage'
 import { DisciplineSelector } from './DisciplineSelector'
 import { EditorToolbar } from './EditorToolbar'
+import { ServusNotePanel } from './ServusNotePanel'
 
 const DISC_COLOURS: Record<string, string> = {
   Philosophy:   '#7A4A10',
@@ -43,9 +44,11 @@ export function NoteDetailClient({ id }: { id: string }) {
   const [discipline, setDiscipline] = useState('Theology')
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [notFound, setNotFound] = useState(false)
+  const [servusOpen, setServusOpen] = useState(false)
 
   const colour = DISC_COLOURS[discipline] ?? '#2B3B6B'
   const discBg = DISC_BG[discipline] ?? '#E8EBF6'
+  
 
   const editor = useEditor({
     extensions: [
@@ -88,6 +91,11 @@ export function NoteDetailClient({ id }: { id: string }) {
       content: editor.getJSON(),
     })
     setLastSaved(new Date())
+  }
+
+  const getNoteText = (): string => {
+    if (!editor) return ''
+    return editor.getText()
   }
 
   if (notFound) {
@@ -304,6 +312,7 @@ export function NoteDetailClient({ id }: { id: string }) {
           Save changes
         </button>
         <button
+          onClick={() => setServusOpen(true)}
           style={{
             padding: '7px 16px',
             borderRadius: '8px',
@@ -335,6 +344,16 @@ export function NoteDetailClient({ id }: { id: string }) {
             : ''}
         </span>
       </div>
+      {/* Servus panel */}
+      {note && (
+        <ServusNotePanel
+          note={note}
+          discipline={discipline}
+          noteText={getNoteText()}
+          isOpen={servusOpen}
+          onClose={() => setServusOpen(false)}
+        />
+      )}
     </div>
   )
 }

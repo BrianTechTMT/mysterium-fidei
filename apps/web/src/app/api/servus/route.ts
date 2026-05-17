@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
     // what the user is studying today without being told explicitly.
     let contextString = ''
     if (context) {
+      // Daily Sacred context
       if (context.gospel) {
         contextString += `\nToday's Gospel: ${context.gospel.reference} — ${context.gospel.text}`
       }
@@ -91,8 +92,27 @@ export async function POST(request: NextRequest) {
       if (context.synthesis) {
         contextString += `\nToday's meditation theme: ${context.synthesis}`
       }
-    }
 
+      // Note study context — injected when Servus is opened from a note
+      if (context.noteTitle || context.noteContent) {
+        contextString += `\n\n--- STUDENT'S NOTE ---`
+        if (context.noteTitle) {
+          contextString += `\nNote title: ${context.noteTitle}`
+        }
+        if (context.noteDiscipline) {
+          contextString += `\nDiscipline: ${context.noteDiscipline}`
+        }
+        if (context.noteContent) {
+          // Limit to 3000 chars to stay within context limits
+          const content = context.noteContent.slice(0, 3000)
+          contextString += `\nNote content:\n${content}`
+          if (context.noteContent.length > 3000) {
+            contextString += `\n[Note truncated — ${context.noteContent.length} total characters]`
+          }
+        }
+        contextString += `\n\nYou have read the student's note above. Respond specifically to its content — reference what they have written, build on their ideas, correct any errors charitably, and deepen their understanding. Do not speak generically.`
+      }
+    }
     const systemWithContext = contextString
       ? `${SERVUS_SYSTEM_PROMPT}\n\n--- TODAY'S LITURGICAL CONTEXT ---${contextString}`
       : SERVUS_SYSTEM_PROMPT
