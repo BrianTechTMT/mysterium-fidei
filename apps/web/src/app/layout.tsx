@@ -1,24 +1,11 @@
 // ================================================================
-// MYSTERIUM FIDEI — Root Layout
-// ================================================================
-// This wraps every single page in the app.
-// In Next.js App Router, layout.tsx is the persistent shell —
-// it renders once and stays mounted as the user navigates.
-//
-// What lives here:
-// - HTML metadata (title, description)
-// - The persistent topbar
-// - The main content area where pages render
-//
-// NOTE — Tailwind v4:
-// Custom colour opacity modifiers (bg-sacred-gold/15) require
-// the colour to be defined as an rgb value in @theme to work.
-// We use inline style for custom colour + opacity combinations,
-// and standard Tailwind classes for everything else.
+// MYSTERIUM FIDEI — Root Layout (with Theme System)
 // ================================================================
 
 import type { Metadata } from 'next'
 import './globals.css'
+import { ThemeProvider } from '@/context/ThemeContext'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export const metadata: Metadata = {
   title: {
@@ -46,137 +33,170 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="parchment">
       <body>
         {/*
-          App shell — two rows:
-          Row 1: 56px topbar (fixed height, always visible)
-          Row 2: 1fr — fills all remaining screen height
+          Inline script runs before React hydrates.
+          Reads localStorage and sets data-theme on <html>
+          immediately — prevents any flash of wrong theme.
+          This is the industry standard pattern for
+          theme persistence without flicker.
         */}
-        <div className="min-h-screen grid grid-rows-[56px_1fr]">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('mf-theme');
+                  var valid = ['parchment', 'sanctum', 'scriptorium'];
+                  var theme = valid.includes(saved) ? saved : 'parchment';
+                  document.documentElement.setAttribute('data-theme', theme);
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
 
-          {/* ---- Topbar ---------------------------------------- */}
-          <header
-            className="flex items-center px-5 gap-4 sticky top-0 z-50"
-            style={{
-              backgroundColor: 'var(--color-sanctum-black)',
-              borderBottom: '2px solid var(--color-sacred-gold)',
-            }}
-          >
+        <ThemeProvider>
+          <div className="min-h-screen grid grid-rows-[56px_1fr]">
 
-            {/* App name */}
-            <div
-              className="text-sm font-medium flex-shrink-0 leading-tight
-                         tracking-widest"
+            {/* ---- Topbar ------------------------------------ */}
+            <header
+              className="flex items-center px-5 gap-4 sticky top-0 z-50"
               style={{
-                fontFamily: 'var(--font-cinzel)',
-                color: 'var(--color-sacred-gold)',
+                backgroundColor: 'var(--color-sanctum-black)',
+                borderBottom: '2px solid var(--color-sacred-gold)',
               }}
             >
-              MYSTERIUM
-              <span
-                className="block text-[10px] font-light tracking-[0.15em]
-                           normal-case"
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  color: 'rgba(255,255,255,0.4)',
-                }}
-              >
-                Fidei
-              </span>
-            </div>
-
-            {/* Vertical divider */}
-            <div
-              className="w-px h-7 flex-shrink-0"
-              style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-            />
-
-            {/* Search bar */}
-            <div className="flex-1 max-w-md">
+              {/* App name */}
               <div
-                className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                className="text-sm font-medium flex-shrink-0
+                           leading-tight tracking-widest"
                 style={{
-                  backgroundColor: 'rgba(255,255,255,0.05)',
-                  border: '0.5px solid rgba(255,255,255,0.1)',
+                  fontFamily: 'var(--font-cinzel)',
+                  color: 'var(--color-sacred-gold)',
                 }}
               >
-                {/* Search icon */}
-                <svg
-                  className="w-3.5 h-3.5 flex-shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  style={{ color: 'rgba(255,255,255,0.3)' }}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search notes, scripture, theology..."
-                  className="bg-transparent text-xs outline-none w-full"
+                MYSTERIUM
+                <span
+                  className="block text-[10px] font-light
+                             tracking-[0.15em] normal-case"
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    color: 'rgba(255,255,255,0.6)',
+                    color: 'rgba(255,255,255,0.4)',
                   }}
-                />
+                >
+                  Fidei
+                </span>
               </div>
-            </div>
 
-            {/* Right side — Servus badge + avatar */}
-            <div className="ml-auto flex items-center gap-3">
-
-              {/* Servus badge */}
+              {/* Divider */}
               <div
-                className="text-[11px] font-medium px-3 py-1 rounded-full
-                           tracking-wide cursor-pointer transition-colors"
-                style={{
-                  backgroundColor: 'rgba(184,135,42,0.15)',
-                  border: '0.5px solid rgba(184,135,42,0.3)',
-                  color: 'var(--color-sacred-gold-lt)',
-                  fontFamily: 'var(--font-sans)',
-                }}
-              >
-                ✦ Servus
+                className="w-px h-7 flex-shrink-0"
+                style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+              />
+
+              {/* Search */}
+              <div className="flex-1 max-w-md">
+                <div
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    border: '0.5px solid rgba(255,255,255,0.1)',
+                  }}
+                >
+                  <svg
+                    className="w-3.5 h-3.5 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    style={{ color: 'rgba(255,255,255,0.3)' }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search notes, scripture, theology..."
+                    className="bg-transparent text-xs outline-none w-full"
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      color: 'rgba(255,255,255,0.6)',
+                    }}
+                  />
+                </div>
               </div>
 
-              {/* User avatar — BT for BrianTechTMT */}
+              {/* Right side */}
+              <div className="ml-auto flex items-center gap-3">
+
+                {/* Theme toggle */}
+                <ThemeToggle />
+
+                {/* Servus badge */}
+                <div
+                  className="text-[11px] font-medium px-3 py-1
+                             rounded-full tracking-wide cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(184,135,42,0.15)',
+                    border: '0.5px solid rgba(184,135,42,0.3)',
+                    color: 'var(--color-sacred-gold-lt)',
+                    fontFamily: 'var(--font-sans)',
+                  }}
+                >
+                  ✦ Servus
+                </div>
+
+                {/* Avatar */}
+                <div
+                  className="w-8 h-8 rounded-full flex items-center
+                             justify-center text-white text-xs
+                             font-medium cursor-pointer"
+                  style={{
+                    backgroundColor: 'var(--color-apologetics)',
+                    border: '2px solid rgba(184,135,42,0.4)',
+                    fontFamily: 'var(--font-sans)',
+                  }}
+                >
+                  BT
+                </div>
+
+              </div>
+            </header>
+
+            {/* ---- Page content ------------------------------ */}
+            <main className="overflow-auto relative">
               {/*
-                In Phase 4 this will pull initials from the auth session.
-                Hardcoded for now.
+                Parchment texture overlay — pure CSS SVG noise filter.
+                The pseudo-element approach doesn't work in React so
+                we use a absolutely positioned div instead.
+                pointer-events-none means it never blocks clicks.
+                Only visible on parchment theme — hidden on dark themes.
               */}
               <div
-                className="w-8 h-8 rounded-full flex items-center
-                           justify-center text-white text-xs font-medium
-                           cursor-pointer"
+                aria-hidden="true"
                 style={{
-                  backgroundColor: 'var(--color-apologetics)',
-                  border: '2px solid rgba(184,135,42,0.4)',
-                  fontFamily: 'var(--font-sans)',
+                  position: 'fixed',
+                  inset: 0,
+                  zIndex: 0,
+                  pointerEvents: 'none',
+                  opacity: 0.06,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                  backgroundSize: '200px 200px',
+                  backgroundRepeat: 'repeat',
                 }}
-              >
-                BT
+              />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                {children}
               </div>
+            </main>
 
-            </div>
-
-          </header>
-
-          {/* ---- Page content ---------------------------------- */}
-          {/*
-            overflow-auto allows the page to scroll
-            while the topbar stays fixed above it.
-          */}
-          <main className="overflow-auto">
-            {children}
-          </main>
-
-        </div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )
