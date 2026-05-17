@@ -1,0 +1,22 @@
+{
+  "name": "mysterium-fidei",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "lint": "npm run lint --workspace=apps/web --workspace=apps/api",
+    "type-check": "npm run type-check --workspace=apps/web --workspace=apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}

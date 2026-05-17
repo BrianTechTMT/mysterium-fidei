@@ -1,0 +1,54 @@
+# Dependencies — never commit these, they are rebuilt with npm install
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs — generated files, not source
+dist/
+build/
+.next/
+out/
+
+# Environment variables — THE MOST IMPORTANT SECTION
+# These files contain your Claude API key and database password
+# If committed to a public repo they are exposed PERMANENTLY
+# even if deleted later — git history preserves everything
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# macOS — Finder metadata files, invisible but messy in git
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code — personal editor settings stay local
+.vscode/settings.json
+.vscode/launch.json
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+logs/
+*.log
+
+# iOS / Xcode — generated build artifacts, not source code
+apps/ios/DerivedData/
+apps/ios/*.xcuserstate
+apps/ios/xcuserdata/
+apps/ios/*.xcworkspace/xcuserdata/
+apps/ios/Pods/
+
+# Docker
+.docker/
+
+# Test coverage
+coverage/
+.nyc_output/
