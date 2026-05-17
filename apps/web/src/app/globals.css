@@ -233,3 +233,9 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   color: var(--theme-text-3, rgba(61, 52, 37, 0.5));
 }
+
+/* Servus loading dots animation */
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}

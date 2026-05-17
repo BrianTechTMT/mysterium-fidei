@@ -10,6 +10,7 @@
 import type { Metadata } from 'next'
 import { Sidebar } from '@/components/daily/Sidebar'
 import { FormTabs } from '@/components/daily/FormTabs'
+import { ServusPanel } from '@/components/daily/ServusPanel'
 
 export const metadata: Metadata = {
   title: 'Daily Sacred',
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 async function getDailyData() {
   const res = await fetch('http://localhost:3000/api/daily', {
-    next: { revalidate: 3600 },
+    cache: 'no-store', // disable cache in development
   })
   if (!res.ok) throw new Error('Failed to fetch daily data')
   const json = await res.json()
@@ -216,9 +217,11 @@ export default async function DailyPage() {
               <p style={{ fontSize: '11px', color: 'var(--theme-text-3)', marginBottom: '10px' }}>
                 {day.readings.psalm.reference}
               </p>
-              <p style={{ fontFamily: 'var(--font-cormorant)', fontSize: '14px', fontStyle: 'italic', color: 'var(--color-sacred-gold)', borderLeft: '2px solid var(--color-sacred-gold)', padding: '6px 12px', marginBottom: '10px', backgroundColor: 'rgba(184,135,42,0.05)', borderRadius: '0 6px 6px 0' }}>
-                ℟. {day.readings.psalm.antiphon}
-              </p>
+              {day.readings.psalm.antiphon && (
+                <p style={{ fontFamily: 'var(--font-cormorant)', fontSize: '14px', fontStyle: 'italic', color: 'var(--color-sacred-gold)', borderLeft: '2px solid var(--color-sacred-gold)', padding: '6px 12px', marginBottom: '10px', backgroundColor: 'rgba(184,135,42,0.05)', borderRadius: '0 6px 6px 0' }}>
+                    <span style={{ fontWeight: 600 }}>℟.</span> {day.readings.psalm.antiphon}
+                </p>
+                )}
               <p style={{ fontFamily: 'var(--font-cormorant)', fontSize: '16px', lineHeight: 1.7, color: 'var(--theme-text)' }}>
                 {day.readings.psalm.text}
               </p>
@@ -303,6 +306,22 @@ export default async function DailyPage() {
 
         </div>
       </div>
+    {/* ---- Servus panel (third column) ------------------ */}
+      <ServusPanel
+        context={{
+          gospel: {
+            reference: day.readings.gospel.reference,
+            text: day.readings.gospel.text,
+          },
+          firstReading: {
+            reference: day.readings.firstReading.reference,
+          },
+          efSaint: day.ef.saints[0]?.name,
+          ofSaint: day.of.saints[0]?.name,
+          synthesis: day.servusSynthesis.theme,
+        }}
+      />
+
     </div>
   )
 }

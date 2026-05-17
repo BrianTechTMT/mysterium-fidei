@@ -152,6 +152,62 @@ export function FormTabs({ ef, of }: FormTabsProps) {
       </div>
 
       {/* ---- Active form celebration banner ----------------- */}
+      {/* ---- EF Mass propers notice ------------------------- */}
+      {activeForm === 'EF' && (
+        <div
+          style={{
+            margin: '12px 20px 0',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(60,52,137,0.06)',
+            border: '0.5px solid rgba(60,52,137,0.2)',
+            borderLeft: '3px solid var(--color-ef-indigo)',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+          }}
+        >
+          <span style={{ fontSize: '14px', flexShrink: 0 }}>📋</span>
+          <div>
+            <p
+              style={{
+                fontSize: '10px',
+                fontWeight: 500,
+                color: 'var(--color-ef-indigo)',
+                marginBottom: '3px',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Extraordinary Form — Mass Propers
+            </p>
+            <p
+              style={{
+                fontSize: '11px',
+                color: 'var(--theme-text-2)',
+                lineHeight: 1.55,
+              }}
+            >
+              The EF Mass proper texts — Introit, Gradual, Alleluia, Tract,
+              Offertory, and Communion antiphons — differ from the Ordinary
+              Form and are sourced from the{' '}
+              <em>Missale Romanum</em> (1962). Full EF Mass propers via
+              Divinum Officium are coming in Phase 4. The readings shown
+              above reflect the OF Lectionary.
+            </p>
+            <p
+              style={{
+                fontSize: '10px',
+                color: 'var(--theme-text-3)',
+                marginTop: '5px',
+                fontStyle: 'italic',
+              }}
+            >
+              Phase 4: Divinum Officium Docker → EF Introit · Gradual ·
+              Alleluia · Tract · Offertory · Communion
+            </p>
+          </div>
+        </div>
+      )}
       {/* Shows the name of today's celebration in the active form */}
       <div
         style={{
