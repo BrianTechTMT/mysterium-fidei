@@ -86,6 +86,7 @@ export function Sidebar() {
           { href: '/daily',     icon: '📅', label: 'Daily Sacred' },
           { href: '/notes',     icon: '📖', label: 'My Notes'     },
           { href: '/notes/new', icon: '✏',  label: 'New Note'     },
+          { href: '/review',    icon: '🃏', label: 'Review'       },
         ].map(item => (
           <Link
             key={item.href}

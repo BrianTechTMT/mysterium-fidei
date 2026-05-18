@@ -20,6 +20,7 @@ import { getNoteById, saveNote, type SavedNote } from '@/lib/notesStorage'
 import { DisciplineSelector } from './DisciplineSelector'
 import { EditorToolbar } from './EditorToolbar'
 import { ServusNotePanel } from './ServusNotePanel'
+import { FlashcardGenerator } from '@/components/flashcards/FlashcardGenerator'
 
 const DISC_COLOURS: Record<string, string> = {
   Philosophy:   '#7A4A10',
@@ -49,6 +50,8 @@ export function NoteDetailClient({ id }: { id: string }) {
   const colour = DISC_COLOURS[discipline] ?? '#2B3B6B'
   const discBg = DISC_BG[discipline] ?? '#E8EBF6'
   
+   const [flashcardOpen, setFlashcardOpen] = useState(false)
+  const [flashcardsSaved, setFlashcardsSaved] = useState(0)
 
   const editor = useEditor({
     extensions: [
@@ -327,6 +330,22 @@ export function NoteDetailClient({ id }: { id: string }) {
         >
           ✦ Ask Servus about this note
         </button>
+        <button
+          onClick={() => setFlashcardOpen(true)}
+          style={{
+            padding: '7px 16px',
+            borderRadius: '8px',
+            border: `0.5px solid ${colour}40`,
+            backgroundColor: discBg,
+            color: colour,
+            fontSize: '12px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            fontFamily: 'var(--font-sans)',
+          }}
+        >
+          🃏 Generate flashcards
+        </button>
         <span
           style={{
             marginLeft: 'auto',
@@ -352,6 +371,19 @@ export function NoteDetailClient({ id }: { id: string }) {
           noteText={getNoteText()}
           isOpen={servusOpen}
           onClose={() => setServusOpen(false)}
+        />
+      )}
+      {/* Flashcard generator */}
+      {flashcardOpen && note && (
+        <FlashcardGenerator
+          noteText={getNoteText()}
+          noteTitle={note.title}
+          discipline={discipline}
+          onClose={() => setFlashcardOpen(false)}
+          onSaved={(count) => {
+            setFlashcardsSaved(count)
+            setFlashcardOpen(false)
+          }}
         />
       )}
     </div>
