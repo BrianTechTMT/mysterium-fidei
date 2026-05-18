@@ -11,6 +11,7 @@ import type { Metadata } from 'next'
 import { Sidebar } from '@/components/daily/Sidebar'
 import { FormTabs } from '@/components/daily/FormTabs'
 import { ServusPanel } from '@/components/daily/ServusPanel'
+import { MobileDailyWrapper } from '@/components/daily/MobileDailyWrapper'
 
 export const metadata: Metadata = {
   title: 'Daily Sacred',
@@ -323,5 +324,8 @@ export default async function DailyPage() {
       />
 
     </div>
+  )
+  return (
+    <MobileDailyWrapper day={day} />
   )
 }

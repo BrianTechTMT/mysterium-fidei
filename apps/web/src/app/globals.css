@@ -370,3 +370,37 @@ h1, h2, h3, h4, h5, h6 {
 .mf-editor-content ::selection {
   background-color: rgba(184, 135, 42, 0.2);
 }
+/* ================================================================
+   RESPONSIVE LAYOUT — CSS Media Queries
+   ================================================================
+   Hide/show layout columns based on screen width.
+   CSS media queries are instant — no JavaScript timing issues.
+   ================================================================ */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: flex;
+}
+
+/* On mobile — hide sidebar and Servus panel */
+@media (max-width: 767px) {
+  .mobile-only {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+/* On tablet and desktop — hide mobile elements */
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-only {
+    display: flex !important;
+  }
+}
